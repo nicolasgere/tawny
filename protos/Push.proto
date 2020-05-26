@@ -1,0 +1,32 @@
+syntax = "proto3";
+package tawny;
+import "google/protobuf/empty.proto";
+
+
+message SubscribeInput {
+    string channel = 1; /** A reference to the channel */
+    string topic = 2; /** A reference to the topic */
+}
+
+
+message PushInput {
+    string channel = 1;
+    string topic = 2;
+    bytes data = 3; /** Your payload */
+}
+
+message Message {
+    bytes data = 1; /** Your payload */
+}
+
+service PushService {
+
+    /** Subscribe to a channel/topic to receive Owl Message */
+    rpc Subscribe(SubscribeInput) returns (stream  Message) {}
+    /** Subscribe to a channel/topic to receive Owl Message */
+    rpc Publish(PushInput) returns (google.protobuf.Empty) {}
+
+
+}
+
+

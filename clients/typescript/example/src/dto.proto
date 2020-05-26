@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+message Message {
+   string message = 1;
+   string username = 2;
+}
+
+message State {
+    bool isWriting = 1;
+}
+
+message HeartBeat {
+    string username = 1;
+    State state = 2;
+}
+  

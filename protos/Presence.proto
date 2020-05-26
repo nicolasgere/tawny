@@ -1,0 +1,39 @@
+syntax = "proto3";
+package tawny;
+import "google/protobuf/empty.proto";
+
+
+message PresenceSubscribeInput {
+    string channel = 1; /** A reference to the channel */
+    string topic = 2; /** A reference to the topic */
+}
+
+message Presence {
+    bytes state = 1; /** The state for a particular person */
+    string key = 2; /** A unique key for presence */
+}
+
+message PresenceSubscribeResponse {
+    repeated Presence presences = 1; /** A list of presence */
+    enum Type {
+        FULL = 0;
+        PARTIAL = 1;
+    }
+    Type update_type = 2;  /** For now only full is supported */
+}
+
+message HeartBeatInput {
+    bytes state = 1; /** The state for a particular person */
+    string key = 2; /** A unique key for presence */
+    string channel = 3; /** A reference to the channel */
+    string topic = 4; /** A reference to the topic */
+}
+
+service PresenceService {
+
+    /** Subscribe to a channel/topic to get presence update */
+    rpc PresenceSubscribe(PresenceSubscribeInput) returns (stream PresenceSubscribeResponse) {}
+    /** Heartbeat to a channel */
+    rpc HeartBeat(HeartBeatInput) returns (google.protobuf.Empty) {}
+}
+
