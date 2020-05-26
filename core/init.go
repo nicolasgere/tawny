@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/dgraph-io/badger/v2"
 	"github.com/golang/protobuf/ptypes/empty"
+	"github.com/spf13/viper"
 	"log"
 	"tawny/tawny"
 )
@@ -15,7 +16,7 @@ var db *badger.DB
 
 func Init() {
 	var err error
-	db, err = badger.Open(badger.DefaultOptions("db-temp/badger"))
+	db, err = badger.Open(badger.DefaultOptions(viper.GetString(BADGER_PATH)))
 	if err != nil {
 		log.Fatal(err)
 	}

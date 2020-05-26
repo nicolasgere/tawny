@@ -8,7 +8,6 @@ require (
 	github.com/fiorix/protoc-gen-cobra v0.0.0-20181029091941-dffa0bfa45cc
 	github.com/go-chi/chi v4.1.1+incompatible
 	github.com/golang/protobuf v1.4.2
-	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/improbable-eng/grpc-web v0.12.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f // indirect
@@ -16,7 +15,8 @@ require (
 	github.com/segmentio/ksuid v1.0.2
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.3
+	github.com/spf13/viper v1.7.0
 	golang.org/x/net v0.0.0-20190620200207-3b0461eec859
-	golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be
+	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	google.golang.org/grpc v1.29.1
 )

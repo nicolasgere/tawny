@@ -4,6 +4,7 @@ import (
 	"github.com/go-chi/chi"
 	chiMiddleware "github.com/go-chi/chi/middleware"
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
+	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
 	"net/http"
@@ -30,6 +31,8 @@ func NewGrpcWebMiddleware(grpcWeb *grpcweb.WrappedGrpcServer) *GrpcWebMiddleware
 }
 
 func main() {
+	core.InitConfig()
+
 	core.Init()
 	grpcServer := grpc.NewServer()
 	tawny.RegisterPushServiceServer(grpcServer, &core.PushServer{})
@@ -46,7 +49,7 @@ func main() {
 		w.WriteHeader(200)
 	})
 
-	if err := http.ListenAndServe(":8900", router); err != nil {
+	if err := http.ListenAndServe(":"+viper.GetString(core.GATEWAY_PORT), router); err != nil {
 		grpclog.Fatalf("failed starting http2 server: %v", err)
 	}
 
