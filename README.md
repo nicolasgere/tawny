@@ -13,38 +13,34 @@ Tawny was designed with performance/scalling/reliability in mind. It provide mul
 - **Publish/Subscribe**, publish a message from anywhere and get your users notified instantly  
 - **Presence**,  know who is connected or not in a channel, perfect for building presense feature like google docs  
 - **State**, you can share a state with your presence, awesome for "is writing" feature.  
+- **Binary data**, thanks to profobuf/grpc, your payload don't need to be json. It can be every binary fuke
 - **Private channel**, you can control who have access to a channel.  
 - **Complete admin library/cli**, manage your Tawny server using a powerfull admin api.  
 - **Monitoring**, monitor your server easily with our promotheus(and more to come)  metrics exporter.  
 ## Getting started  
-### Using free cloud hosted buzz server  
-Visit the demo project   
-### Using your own server  
-Visit the documentation   
+Visit the [documentation](docs),
 ## Feature roadmap  
   
 This is our feature roadmap. If you want to ask a new feature. Please open an issue  
   
 ##### v0.1 Alpha => On going  
-- [x] Publish/Subscribe  
-- [x] Presence  
-- [x] State  
-- [x] GCP only (bigtable/pubsub)  
-- [x] Typescript npm package (client)  
-- [ ] Admin api  
+- [x] Push service (Public facing publish/subscrib)
+- [x] Presence  service (Presence on channel/topic with state)
+- [x] Typescript npm package
+- [x]  Automatique TLS terminaison  
+- [x]  Docker image
+- [ ] Secure channel  
+- [ ] Admin service
   
 ##### Backlog  
-- [ ] Tls terminaison  
-- [ ] Secure channel  
-- [ ] IOS client  
+
+- [ ] Cluster mode
 - [ ] Android client  
 - [ ] Admin ui   
-- [ ] Hbase support  
-- [ ] Kafka support  
-- [ ] Rabbitmq support  
+- [ ] Clients ( java/php/c#/python)
   
-## Performance  
-Buzz rely on hbase(bigtable), and pubsub, it will scale horizontally if you use managed service like google bigtable and pubsub.  
+## Performance
+With 1 core / 1gb of ram on Digital ocean,  Tawny is able to process up to 100k message seconds with < 5 ms latency.
   
 ## Author  
   

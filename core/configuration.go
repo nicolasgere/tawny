@@ -6,12 +6,24 @@ import (
 
 const (
 	BADGER_PATH  = "BADGER_PATH"
-	GATEWAY_PORT = "GATEWAY_PORT"
+	HTTPS_ENABLE = "HTTPS_ENABLE"
+	HTTPS_DOMAIN = "HTTPS_DOMAIN"
+	HTTPS_EMAIL  = "HTTPS_EMAIL"
+	HTTPS_PORT   = "HTTPS_PORT"
+	HTTP_PORT    = "HTTP_PORT"
+	GRPC_PORT    = "GRPC_PORT"
 )
 
 func InitConfig() {
 	viper.AutomaticEnv()
 	viper.SetEnvPrefix("tawny")
 	viper.SetDefault(BADGER_PATH, "db-temp/badger")
-	viper.SetDefault(GATEWAY_PORT, "8900")
+	viper.SetDefault(HTTPS_ENABLE, false)
+	viper.SetDefault(GRPC_PORT, "4000")
+	if viper.GetBool(HTTPS_ENABLE) {
+		viper.SetDefault(HTTPS_PORT, "443")
+		viper.SetDefault(HTTP_PORT, "80")
+	} else {
+		viper.SetDefault(HTTP_PORT, "8900")
+	}
 }

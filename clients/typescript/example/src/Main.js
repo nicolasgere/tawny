@@ -22,8 +22,8 @@ export class Main extends React.Component {
 
         }
         const transport = grpc.FetchReadableStreamTransport()
-        this.pushClient = new Push.Client("http://localhost:8900", { transport });
-        this.presenceClient = new Presence.Client("http://localhost:8900", { transport });
+        this.pushClient = new Push.Client("https://tawny.bobby-demo.site", { transport });
+        this.presenceClient = new Presence.Client("https://tawny.bobby-demo.site", { transport });
 
     }
 
