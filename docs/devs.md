@@ -1,3 +1,7 @@
+### Requirements
+
+- Go 1.14+
+
 
 ### Generate core Golang
 ```  
