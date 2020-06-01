@@ -15,7 +15,7 @@ func main() {
 	md := metadata.New(map[string]string{"API_KEY": "abc"})
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
 
-	conn, err := grpc.Dial("localhost:4000", grpc.WithInsecure())
+	conn, err := grpc.Dial("tawny.bobby-demo.site:4000", grpc.WithInsecure())
 	if err != nil {
 		panic(err)
 	}
@@ -28,37 +28,35 @@ func main() {
 		},
 	})
 	go func() {
-		pushClient := tawny.NewPushServiceClient(conn)
-		for i := 0; i < 2000; i++ {
-			time.Sleep(1 * time.Millisecond)
-			_, err := pushClient.Publish(ctx, &tawny.PushInput{
-				Channel: "test-load",
-				Topic:   "1",
-				Data:    []byte(strconv.FormatInt(time.Now().UnixNano(), 10)),
-			})
-			if err != nil {
-				fmt.Println(err.Error())
-			}
-		}
+
 	}()
 	end := make(chan bool)
-	go Subscriber(ctx, conn, end)
-	go Subscriber(ctx, conn, end)
-	go Subscriber(ctx, conn, end)
-	go Subscriber(ctx, conn, end)
-	<-end
-	<-end
-	<-end
-	<-end
+
+	for i := 0; i < 50; i++ {
+		go Publish(strconv.Itoa(i))
+		go Publish(strconv.Itoa(i))
+
+		go Subscriber(strconv.Itoa(i), end)
+		go Subscriber(strconv.Itoa(i), end)
+
+	}
+	for i := 0; i < 49; i++ {
+		<-end
+	}
 	defer conn.Close()
 }
 
-func Subscriber(ctx context.Context, conn *grpc.ClientConn, end chan bool) {
-
+func Subscriber(topic string, end chan bool) {
+	md := metadata.New(map[string]string{"API_KEY": "abc"})
+	ctx := metadata.NewOutgoingContext(context.Background(), md)
+	conn, err := grpc.Dial("tawny.bobby-demo.site:4000", grpc.WithInsecure())
+	if err != nil {
+		panic(err)
+	}
 	pushClient := tawny.NewPushServiceClient(conn)
 	psb, err := pushClient.Subscribe(ctx, &tawny.SubscribeInput{
 		Channel: "test-load",
-		Topic:   "1",
+		Topic:   topic,
 	})
 	if err != nil {
 		panic(err)
@@ -84,10 +82,37 @@ func Subscriber(ctx context.Context, conn *grpc.ClientConn, end chan bool) {
 		if diff > max {
 			max = diff
 		}
-		if message == 2000 {
+		if message == 200 {
+			psb.CloseSend()
 			break
+		}
+		if message%10 == 0 {
+			fmt.Printf("Result: call %d latency_average: %d max:%d \n", message, latency/message, max)
 		}
 	}
 	fmt.Printf("Result: call %d latency_average: %d max:%d \n", message, latency/message, max)
+	conn.Close()
 	end <- true
+}
+
+func Publish(topic string) {
+	md := metadata.New(map[string]string{"API_KEY": "abc"})
+	ctx := metadata.NewOutgoingContext(context.Background(), md)
+
+	conn, err := grpc.Dial("tawny.bobby-demo.site:4000", grpc.WithInsecure())
+	if err != nil {
+		panic(err)
+	}
+	pushClient := tawny.NewPushServiceClient(conn)
+	for i := 0; i < 200; i++ {
+		time.Sleep(time.Millisecond * 50)
+		_, err := pushClient.Publish(ctx, &tawny.PushInput{
+			Channel: "test-load",
+			Topic:   topic,
+			Data:    []byte(strconv.FormatInt(time.Now().UnixNano(), 10)),
+		})
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+	}
 }
