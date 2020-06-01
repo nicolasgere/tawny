@@ -2,29 +2,54 @@ package core
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/segmentio/ksuid"
+	"sync"
 	"tawny/tawny"
 )
 
-func Subscribe(subscribeInput *tawny.SubscribeInput, stream tawny.PushService_SubscribeServer) error {
+var mutex = sync.Mutex{}
+
+type PushServer struct {
+}
+
+func (s *PushServer) Subscribe(subscribeInput *tawny.SubscribeInput, stream tawny.PushService_SubscribeServer) error {
+	return Subscribe(subscribeInput, stream)
+}
+func (s *PushServer) Publish(ctx context.Context, pushInput *tawny.PushInput) (*empty.Empty, error) {
+	return Publish(ctx, pushInput)
+}
+
+func Subscribe(input *tawny.SubscribeInput, stream tawny.PushService_SubscribeServer) (err error) {
+	var channelConfig *tawny.ChannelConfiguration
+	channelConfig, err = VerifyChannel(input.Channel, stream.Context())
+	if channelConfig != nil {
+		err = errors.New(fmt.Sprintf("channel %s do not exist or inaccessible", input.Channel))
+	}
 	id, err := ksuid.NewRandom()
-	fmt.Printf("subscribe channel:%s topic:%s id:%s \n", subscribeInput.Channel, subscribeInput.Topic, id.String())
+	fmt.Printf("subscribe channel:%s topic:%s id:%s \n", input.Channel, input.Topic, id.String())
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 	c := make(chan tawny.Message)
-	if val, ok := SubscriptionStore[subscribeInput.Topic+subscribeInput.Channel]; ok {
+	mutex.Lock()
+	if val, ok := SubscriptionStore[input.Topic+input.Channel]; ok {
 		val[id.String()] = &c
 	} else {
-		SubscriptionStore[subscribeInput.Topic+subscribeInput.Channel] = map[string]*chan (tawny.Message){
+		SubscriptionStore[input.Topic+input.Channel] = map[string]*chan (tawny.Message){
 			id.String(): &c,
 		}
 	}
+	mutex.Unlock()
+
 	defer func() {
-		delete(SubscriptionStore[subscribeInput.Topic+subscribeInput.Channel], id.String())
+		mutex.Lock()
+		delete(SubscriptionStore[input.Topic+input.Channel], id.String())
+		mutex.Unlock()
+
 	}()
 Loop:
 	for {
@@ -35,19 +60,34 @@ Loop:
 				fmt.Println(err)
 				break Loop
 			}
-			fmt.Printf("subscribe channel:%s topic:%s id:%s message \n", subscribeInput.Channel, subscribeInput.Topic, id.String())
+			fmt.Printf("subscribe channel:%s topic:%s id:%s message \n", input.Channel, input.Topic, id.String())
 		}
 	}
 	return nil
 }
-func Publish(ctx context.Context, pushInput *tawny.PushInput) (em *empty.Empty, err error) {
+func Publish(ctx context.Context, input *tawny.PushInput) (em *empty.Empty, err error) {
+	var channelConfig *tawny.ChannelConfiguration
+	channelConfig, err = VerifyChannel(input.Channel, ctx)
+	if channelConfig == nil {
+		err = errors.New(fmt.Sprintf("channel %s do not exist or inaccessible", input.Channel))
+	}
+	if err != nil {
+		return
+	}
+	isAdmin := IsAdmin(ctx)
+	if channelConfig.AdminRequiredToPush && isAdmin == false {
+		err = errors.New(fmt.Sprintf("channel %s require admin credential to push", input.Channel))
+	}
 	em = &empty.Empty{}
-	if val, ok := SubscriptionStore[pushInput.Topic+pushInput.Channel]; ok {
+	mutex.Lock()
+	val, ok := SubscriptionStore[input.Topic+input.Channel]
+	mutex.Unlock()
+	if ok {
 		for _, e := range val {
 			m := tawny.Message{
-				Data: pushInput.Data,
+				Data: input.Data,
 			}
-			fmt.Printf("push channel:%s topic:%s message \n", pushInput.Channel, pushInput.Topic)
+			fmt.Printf("push channel:%s topic:%s message \n", input.Channel, input.Topic)
 			*e <- m
 		}
 	}

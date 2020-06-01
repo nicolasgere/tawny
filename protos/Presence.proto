@@ -30,7 +30,6 @@ message HeartBeatInput {
 }
 
 service PresenceService {
-
     /** Subscribe to a channel/topic to get presence update */
     rpc PresenceSubscribe(PresenceSubscribeInput) returns (stream PresenceSubscribeResponse) {}
     /** Heartbeat to a channel */

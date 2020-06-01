@@ -2,19 +2,33 @@ package core
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/dgraph-io/badger/v2"
 	"github.com/golang/protobuf/ptypes/empty"
 	"github.com/segmentio/ksuid"
 	"strings"
+	"sync"
 	"tawny/tawny"
 	"time"
 )
 
-func getPresence(presenceSubscribeInput *tawny.PresenceSubscribeInput) (data []*tawny.Presence, err error) {
-	key := presenceSubscribeInput.Topic + presenceSubscribeInput.Channel
+var mutexPresence = sync.Mutex{}
+
+type PresenceServer struct {
+}
+
+func (s *PresenceServer) HeartBeat(ctx context.Context, heartBeatInput *tawny.HeartBeatInput) (em *empty.Empty, err error) {
+	return HeartBeat(ctx, heartBeatInput)
+}
+func (s *PresenceServer) PresenceSubscribe(presenceInput *tawny.PresenceSubscribeInput, stream tawny.PresenceService_PresenceSubscribeServer) error {
+	return PresenceSubscribe(presenceInput, stream)
+}
+
+func getPresence(input *tawny.PresenceSubscribeInput) (data []*tawny.Presence, err error) {
+	key := input.Topic + input.Channel
 	data = []*tawny.Presence{}
-	err = db.View(func(txn *badger.Txn) error {
+	err = Db.View(func(txn *badger.Txn) error {
 		it := txn.NewIterator(badger.DefaultIteratorOptions)
 		defer it.Close()
 		prefix := []byte(key)
@@ -40,16 +54,22 @@ func getPresence(presenceSubscribeInput *tawny.PresenceSubscribeInput) (data []*
 	return
 }
 
-func PresenceSubscribe(presenceInput *tawny.PresenceSubscribeInput, stream tawny.PresenceService_PresenceSubscribeServer) error {
-	id, err := ksuid.NewRandom()
-	key := presenceInput.Topic + presenceInput.Channel
+func PresenceSubscribe(input *tawny.PresenceSubscribeInput, stream tawny.PresenceService_PresenceSubscribeServer) (err error) {
+	var channelConfig *tawny.ChannelConfiguration
+	channelConfig, err = VerifyChannel(input.Channel, stream.Context())
+	if channelConfig != nil {
+		err = errors.New(fmt.Sprintf("channel %s do not exist or inaccessible", input.Channel))
+	}
 
-	fmt.Printf("presence channel:%s topic:%s id:%s \n", presenceInput.Channel, presenceInput.Topic, id.String())
+	id, err := ksuid.NewRandom()
+	key := input.Topic + input.Channel
+	fmt.Printf("presence channel:%s topic:%s id:%s \n", input.Channel, input.Topic, id.String())
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
 	c := make(chan bool)
+	mutexPresence.Lock()
 	if val, ok := PresenceStore[key]; ok {
 		val[id.String()] = &c
 	} else {
@@ -57,15 +77,19 @@ func PresenceSubscribe(presenceInput *tawny.PresenceSubscribeInput, stream tawny
 			id.String(): &c,
 		}
 	}
+	mutexPresence.Unlock()
+
 	defer func() {
+		mutexPresence.Lock()
 		delete(PresenceStore[key], id.String())
+		mutexPresence.Unlock()
 	}()
 	ticker := time.Tick(time.Second * 10)
 Loop:
 	for {
 		select {
 		case <-c:
-			data, err := getPresence(presenceInput)
+			data, err := getPresence(input)
 			if err != nil {
 				fmt.Println(err)
 				break Loop
@@ -77,9 +101,9 @@ Loop:
 				fmt.Println(err)
 				break Loop
 			}
-			fmt.Printf("presence channel:%s topic:%s id:%s message \n", presenceInput.Channel, presenceInput.Topic, id.String())
+			fmt.Printf("presence channel:%s topic:%s id:%s message \n", input.Channel, input.Topic, id.String())
 		case <-ticker:
-			data, err := getPresence(presenceInput)
+			data, err := getPresence(input)
 			if err != nil {
 				fmt.Println(err)
 				break Loop
@@ -92,7 +116,7 @@ Loop:
 				fmt.Println(err)
 				break Loop
 			}
-			fmt.Printf("presence channel:%s topic:%s id:%s message \n", presenceInput.Channel, presenceInput.Topic, id.String())
+			fmt.Printf("presence channel:%s topic:%s id:%s message \n", input.Channel, input.Topic, id.String())
 		}
 	}
 	return nil
@@ -100,7 +124,7 @@ Loop:
 func HeartBeat(ctx context.Context, heartBeatInput *tawny.HeartBeatInput) (em *empty.Empty, err error) {
 	em = &empty.Empty{}
 	key := heartBeatInput.Topic + heartBeatInput.Channel
-	err = db.Update(func(txn *badger.Txn) error {
+	err = Db.Update(func(txn *badger.Txn) error {
 
 		e := badger.NewEntry([]byte(key+"%%%%"+heartBeatInput.Key), heartBeatInput.State).WithTTL(time.Second * 10)
 		err := txn.SetEntry(e)

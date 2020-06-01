@@ -5,6 +5,7 @@ import (
 )
 
 const (
+	ADMIN_KEY    = "ADMIN_KEY"
 	BADGER_PATH  = "BADGER_PATH"
 	HTTPS_ENABLE = "HTTPS_ENABLE"
 	HTTPS_DOMAIN = "HTTPS_DOMAIN"
@@ -25,5 +26,9 @@ func InitConfig() {
 		viper.SetDefault(HTTP_PORT, "80")
 	} else {
 		viper.SetDefault(HTTP_PORT, "8900")
+	}
+	key := viper.GetString(ADMIN_KEY)
+	if key == "" {
+		panic("A TAWNY_ADMIN_KEY need to be define")
 	}
 }

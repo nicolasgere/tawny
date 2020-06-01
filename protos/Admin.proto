@@ -1,0 +1,40 @@
+syntax = "proto3";
+package tawny;
+import "google/protobuf/empty.proto";
+
+
+
+message ChannelConfiguration {
+    /** Define if a message can be push without admin api key. Common use case: Only allow server to push message*/
+     bool admin_required_to_push = 1;
+}
+message CreateOrUpdateChannelInput {
+    string name = 1;
+    ChannelConfiguration configuration = 2;
+}
+
+message Channel {
+    string name = 1;
+    ChannelConfiguration configuration = 2;
+}
+
+message ListChannelOutput {
+    repeated Channel channels  = 1;
+}
+
+message DeleteChannelInput {
+    string name = 1;
+}
+
+
+
+service AdminService {
+    /** Create a new channel */
+    rpc CreateChannelOrUpdate(CreateOrUpdateChannelInput) returns (google.protobuf.Empty) {}
+
+    /** List channels */
+    rpc ListChannel(google.protobuf.Empty) returns (ListChannelOutput) {}
+
+    /** Delete  channel */
+    rpc DeleteChannel(DeleteChannelInput) returns (google.protobuf.Empty) {}
+}

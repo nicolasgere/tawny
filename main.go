@@ -11,6 +11,7 @@ import (
 	"google.golang.org/grpc/grpclog"
 	"net"
 	"net/http"
+	badgerstorage "oya.to/certmagic-badgerstorage"
 	"tawny/core"
 	"tawny/tawny"
 )
@@ -37,6 +38,7 @@ func main() {
 	core.InitConfig()
 	core.Init()
 	grpcServer := grpc.NewServer()
+	tawny.RegisterAdminServiceServer(grpcServer, &core.AdminServer{})
 	tawny.RegisterPushServiceServer(grpcServer, &core.PushServer{})
 	tawny.RegisterPresenceServiceServer(grpcServer, &core.PresenceServer{})
 	wrappedGrpc := grpcweb.WrapServer(grpcServer, grpcweb.WithOriginFunc(func(origin string) bool {
@@ -73,6 +75,7 @@ func main() {
 		certmagic.DefaultACME.Email = email
 		certmagic.HTTPPort = viper.GetInt(core.HTTP_PORT)
 		certmagic.HTTPSPort = viper.GetInt(core.HTTPS_PORT)
+		certmagic.Default.Storage = badgerstorage.New(core.Db)
 		if err := certmagic.HTTPS([]string{domain}, router); err != nil {
 			grpclog.Fatalf("failed starting http2 server: %v", err)
 		}
