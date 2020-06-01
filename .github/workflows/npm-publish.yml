@@ -8,13 +8,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set project dir environment var
-        run: echo ::set-env name=PROJECT_DIR::"$GITHUB_WORKSPACE/my-app"
       - uses: actions/setup-node@v1
         with:
           node-version: 12
           registry-url: https://registry.npmjs.org/
       - run: npm publish
-        working-directory: clients/typescript-web
+        working-directory: dist/typescript-web
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
