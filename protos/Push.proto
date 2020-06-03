@@ -19,6 +19,7 @@ message Message {
     bytes data = 1; /** Your payload */
 }
 
+
 service PushService {
 
     /** Subscribe to a channel/topic to receive Owl Message */

@@ -1,12 +1,18 @@
 package main
 
 import (
+	"fmt"
+	"github.com/caddyserver/certmagic"
 	"github.com/go-chi/chi"
 	chiMiddleware "github.com/go-chi/chi/middleware"
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
+	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
+	"google.golang.org/grpc/reflection"
+	"net"
 	"net/http"
+	badgerstorage "oya.to/certmagic-badgerstorage"
 	"tawny/core"
 	"tawny/tawny"
 )
@@ -30,8 +36,11 @@ func NewGrpcWebMiddleware(grpcWeb *grpcweb.WrappedGrpcServer) *GrpcWebMiddleware
 }
 
 func main() {
+	core.InitConfig()
 	core.Init()
 	grpcServer := grpc.NewServer()
+	reflection.Register(grpcServer)
+	tawny.RegisterAdminServiceServer(grpcServer, &core.AdminServer{})
 	tawny.RegisterPushServiceServer(grpcServer, &core.PushServer{})
 	tawny.RegisterPresenceServiceServer(grpcServer, &core.PresenceServer{})
 	wrappedGrpc := grpcweb.WrapServer(grpcServer, grpcweb.WithOriginFunc(func(origin string) bool {
@@ -46,8 +55,36 @@ func main() {
 		w.WriteHeader(200)
 	})
 
-	if err := http.ListenAndServe(":8900", router); err != nil {
-		grpclog.Fatalf("failed starting http2 server: %v", err)
+	go func() {
+		lis, err := net.Listen("tcp", fmt.Sprintf(":%s", viper.GetString(core.GRPC_PORT)))
+		if err != nil {
+			grpclog.Fatalf("failed starting grpc server: %v", err)
+		}
+		grpcServer.Serve(lis)
+	}()
+
+	if viper.GetBool(core.HTTPS_ENABLE) {
+		domain := viper.GetString(core.HTTPS_DOMAIN)
+		if domain == "" {
+			grpclog.Fatalf("failed to start, if HTTPS_ENABLE then HTTPS_DOMAIN is needed")
+		}
+		email := viper.GetString(core.HTTPS_EMAIL)
+		if email == "" {
+			grpclog.Fatalf("failed to start, if HTTPS_ENABLE then HTTPS_EMAIL is needed")
+		}
+		grpclog.Infof("HTTPS configuration %s %s", domain, email)
+		certmagic.DefaultACME.Agreed = true
+		certmagic.DefaultACME.Email = email
+		certmagic.HTTPPort = viper.GetInt(core.HTTP_PORT)
+		certmagic.HTTPSPort = viper.GetInt(core.HTTPS_PORT)
+		certmagic.Default.Storage = badgerstorage.New(core.Db)
+		if err := certmagic.HTTPS([]string{domain}, router); err != nil {
+			grpclog.Fatalf("failed starting http2 server: %v", err)
+		}
+	} else {
+		if err := http.ListenAndServe(":"+viper.GetString(core.HTTP_PORT), router); err != nil {
+			grpclog.Fatalf("failed starting http2 server: %v", err)
+		}
 	}
 
 }

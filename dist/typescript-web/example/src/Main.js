@@ -8,8 +8,6 @@ var encoder = new TextEncoder("utf-8");
 var decoder = new TextDecoder("utf-8")
 export class Main extends React.Component {
     constructor() {
-        console.log(Push)
-        console.log(Presence)
         super();
         this.subscription = null;
         this.heartbeat = null;
@@ -22,8 +20,8 @@ export class Main extends React.Component {
 
         }
         const transport = grpc.FetchReadableStreamTransport()
-        this.pushClient = new Push.Client("http://localhost:8900", { transport });
-        this.presenceClient = new Presence.Client("http://localhost:8900", { transport });
+        this.pushClient = new Push.Client("http://localhost:8080", { transport });
+        this.presenceClient = new Presence.Client("http://localhost:8080", { transport });
 
     }
 
@@ -43,7 +41,6 @@ export class Main extends React.Component {
         }
     }
     start = async () => {
-        console.log(this.pushClient)
         const subscribeInput = new Push.SubscribeInput();
         subscribeInput.setTopic('chat');
         subscribeInput.setChannel(this.state.channel);

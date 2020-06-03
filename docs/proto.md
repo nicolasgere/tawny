@@ -3,6 +3,15 @@
 
 ## Table of Contents
 
+- [Admin.proto](#Admin.proto)
+    - [Channel](#tawny.Channel)
+    - [ChannelConfiguration](#tawny.ChannelConfiguration)
+    - [CreateOrUpdateChannelInput](#tawny.CreateOrUpdateChannelInput)
+    - [DeleteChannelInput](#tawny.DeleteChannelInput)
+    - [ListChannelOutput](#tawny.ListChannelOutput)
+  
+    - [AdminService](#tawny.AdminService)
+  
 - [Presence.proto](#Presence.proto)
     - [HeartBeatInput](#tawny.HeartBeatInput)
     - [Presence](#tawny.Presence)
@@ -24,6 +33,111 @@
 
 
 
+<a name="Admin.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## Admin.proto
+
+
+
+<a name="tawny.Channel"></a>
+
+### Channel
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  |  |
+| configuration | [ChannelConfiguration](#tawny.ChannelConfiguration) |  |  |
+
+
+
+
+
+
+<a name="tawny.ChannelConfiguration"></a>
+
+### ChannelConfiguration
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| admin_required_to_push | [bool](#bool) |  | Define if a message can be push without admin api key. Common use case: Only allow server to push message |
+
+
+
+
+
+
+<a name="tawny.CreateOrUpdateChannelInput"></a>
+
+### CreateOrUpdateChannelInput
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  |  |
+| configuration | [ChannelConfiguration](#tawny.ChannelConfiguration) |  |  |
+
+
+
+
+
+
+<a name="tawny.DeleteChannelInput"></a>
+
+### DeleteChannelInput
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="tawny.ListChannelOutput"></a>
+
+### ListChannelOutput
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| channels | [Channel](#tawny.Channel) | repeated |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="tawny.AdminService"></a>
+
+### AdminService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| CreateChannelOrUpdate | [CreateOrUpdateChannelInput](#tawny.CreateOrUpdateChannelInput) | [.google.protobuf.Empty](#google.protobuf.Empty) | Create a new channel |
+| ListChannel | [.google.protobuf.Empty](#google.protobuf.Empty) | [ListChannelOutput](#tawny.ListChannelOutput) | List channels |
+| DeleteChannel | [DeleteChannelInput](#tawny.DeleteChannelInput) | [.google.protobuf.Empty](#google.protobuf.Empty) | Delete channel |
+
+ 
+
+
+
 <a name="Presence.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -39,7 +153,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| state | [string](#string) |  | The state for a particular person |
+| state | [bytes](#bytes) |  | The state for a particular person |
 | key | [string](#string) |  | A unique key for presence |
 | channel | [string](#string) |  | A reference to the channel |
 | topic | [string](#string) |  | A reference to the topic |
@@ -57,7 +171,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| state | [string](#string) |  | The state for a particular person |
+| state | [bytes](#bytes) |  | The state for a particular person |
 | key | [string](#string) |  | A unique key for presence |
 
 
@@ -144,7 +258,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| data | [string](#string) |  | Your payload |
+| data | [bytes](#bytes) |  | Your payload |
 
 
 
@@ -161,7 +275,7 @@
 | ----- | ---- | ----- | ----------- |
 | channel | [string](#string) |  |  |
 | topic | [string](#string) |  |  |
-| data | [string](#string) |  | Your payload |
+| data | [bytes](#bytes) |  | Your payload |
 
 
 
