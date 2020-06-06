@@ -13,7 +13,7 @@ docker pull elmazout/tawny:latest
 
 ## Configuration
 
-Tawny can be configured using environment variable
+Tawny can be configured using environment variables
 
 | Variable | Description | Default
 | --- | --- | --- |

@@ -10,7 +10,7 @@ docker run -e TAWNY_ADMIN_KEY="A_SECRET_KEY" -p 8080:80 -p 4000:4000 elmazout/ta
 This will start a tawny server listening on port 8080 for http and 4000 for grpc.
 
 #### Connect with grpcurl
-[grpcurl](https://github.com/fullstorydev/grpcurl) is a tool to communicate with a grpc server using command line. We will use that as an admin interface with the tawny server.
+[grpcurl](https://github.com/fullstorydev/grpcurl) is a tool to communicate with a grpc server using the command line. We will use that as an admin interface with the tawny server.
 
 Listing services:
 ```bash
@@ -33,8 +33,8 @@ service AdminService {
   rpc ListChannel ( .google.protobuf.Empty ) returns ( .tawny.ListChannelOutput );
 }
 ```
-``CreateChannelOrUpdate`` is the grpc method we want to use. All this service are defined in the [protofile](https://github.com/nicolasgere/Tawny/tree/master/protos).
-Lets create the channel now based on the proto definition.
+``CreateChannelOrUpdate`` is the grpc method we want to use. All these services are defined in the [protofile](https://github.com/nicolasgere/Tawny/tree/master/protos).
+Let's create the channel now based on the proto definition.
 
 ```bash
 ~/ grpcurl -plaintext -d '{"name":"test-channel", "configuration":{"admin_required_to_push":false}}' localhost:4000 tawny.AdminService/CreateChannelOrUpdate
@@ -56,5 +56,5 @@ Lets create the channel now based on the proto definition.
  ```
 Voila !
 
-As tawny do not provide any admin UI for now I recommand to use [bloomrpc](https://github.com/uw-labs/bloomrpc). It's a postman like for grpc. Using proto definition it give you an easy way to test tawny.
+As tawny does not provide any admin UI for now I recommand to use [bloomrpc](https://github.com/uw-labs/bloomrpc). It's a postman like UI for grpc. Using proto definition it gives you an easy way to test tawny.
 

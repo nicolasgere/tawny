@@ -64,7 +64,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| admin_required_to_push | [bool](#bool) |  | Define if a message can be push without admin api key. Common use case: Only allow server to push message |
+| admin_required_to_push | [bool](#bool) |  | Define if a message can be pushed without admin api key. Common use case: Only allow server to push message |
 
 
 
