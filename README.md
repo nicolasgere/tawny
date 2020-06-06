@@ -15,7 +15,7 @@ Tawny was designed with performance/scalling/reliability in mind. It provide mul
 - **Monitoring**, monitor your server easily with our promotheus(and more to come)  metrics exporter.  
 
 ## HTTP2/Protobuff advantage over HTTP1/json
-- **Network bandwidth** Profobuf allow the app to use less bandwidth as demonstrated there.[auth0 blog](https://auth0.com/blog/beating-json-performance-with-protobuf/)
+- **Network bandwidth** Profobuf allow the app to use less bandwidth as demonstrated here.[auth0 blog](https://auth0.com/blog/beating-json-performance-with-protobuf/)
 - **Usage of http2** Http2 is the new version of the famous http protocal, faster, more reliable, allow server push and many more. [cloudfare blog](https://www.cloudflare.com/learning/performance/http2-vs-http1.1/)
 - **Binary data** You can send raw binary data using tawny using protobuff. 
 
@@ -30,7 +30,7 @@ This is our feature roadmap. If you want to ask a new feature. Please open an is
 - [x] Presence  service (Presence on channel/topic with state)
 - [X] Admin service
 - [x] Typescript web npm package
-- [x] Typescript server npm package
+- [ ] Typescript server npm package
 - [x] Golang module
 - [x] Automatique TLS terminaison  
 - [x] Docker image
@@ -41,9 +41,8 @@ This is our feature roadmap. If you want to ask a new feature. Please open an is
 
 - [ ] Secure channel  
 - [ ] Cluster mode
-- [ ] Android client  
-- [ ] Admin ui   
-- [ ] Clients ( java/php/c#/python)
+- [ ] Android/IOS/Java/C#/Python etc client
+- [ ] Admin ui
   
 ## Performance
 With 1 core / 1gb of ram on Digital ocean,  Tawny is able to process up to 50k message seconds within < 5 ms latency.

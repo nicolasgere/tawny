@@ -1,7 +1,8 @@
 {
   "name": "tawny-web",
-  "version": "0.0.1",
-  "description": "Tawny web client",
+  "version": "0.0.2",
+  "homepage": "https://github.com/nicolasgere/tawny/tree/master/dist/typescript-web",
+  "description": "Tawny web client.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,8 +12,5 @@
   "devDependencies": {
     "ts-protoc-gen": "^0.12.0"
   },
-  "dependencies": {
-    "google-protobuf": "^3.12.1",
-    "grpc-web": "^1.1.0-rc.1"
-  }
+  "dependencies": {}
 }

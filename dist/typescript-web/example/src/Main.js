@@ -1,6 +1,6 @@
 import React from 'react';
 import {grpc} from "@improbable-eng/grpc-web";
-import {Presence, Push} from "../../index";
+import {Presence, Push} from "tawny-web";
 import Pbf from "pbf";
 import {Message} from "./dto";
 
@@ -13,15 +13,14 @@ export class Main extends React.Component {
         this.heartbeat = null;
         this.state = {
             username: "",
-            channel: "",
             writing: false,
             messages: [],
             online: []
 
         }
         const transport = grpc.FetchReadableStreamTransport()
-        this.pushClient = new Push.Client("http://localhost:8080", { transport });
-        this.presenceClient = new Presence.Client("http://localhost:8080", { transport });
+        this.pushClient = new Push.Client("https://tawny.bobby-demo.site", { transport });
+        this.presenceClient = new Presence.Client("https://tawny.bobby-demo.site", { transport });
 
     }
 
@@ -43,7 +42,7 @@ export class Main extends React.Component {
     start = async () => {
         const subscribeInput = new Push.SubscribeInput();
         subscribeInput.setTopic('chat');
-        subscribeInput.setChannel(this.state.channel);
+        subscribeInput.setChannel('chat-demo');
         const stream = this.pushClient.subscribe(subscribeInput);
         stream.on('data', (owl) => {
             if (owl) {
@@ -67,7 +66,7 @@ export class Main extends React.Component {
 
         const presenceInput = new Presence.PresenceSubscribeInput()
         presenceInput.setTopic('chat');
-        presenceInput.setChannel(this.state.channel);
+        presenceInput.setChannel('chat-demo');
         console.log(this.presenceClient)
         const streamPresence = this.presenceClient.presenceSubscribe(presenceInput);
         streamPresence.on('data', (data) => {
@@ -99,7 +98,7 @@ export class Main extends React.Component {
     heartBeat = async()=>{
         const heartBeatInput = new Presence.HeartBeatInput()
         heartBeatInput.setTopic('chat');
-        heartBeatInput.setChannel(this.state.channel);
+        heartBeatInput.setChannel('chat-demo');
         heartBeatInput.setState(encoder.encode(JSON.stringify({
             writing: this.state.writing,
             username:this.state.username
@@ -114,7 +113,7 @@ export class Main extends React.Component {
     }
     handleLogin = async (event) => {
         event.preventDefault();
-        await this.setState({ ...this.state, username: event.target.username.value, channel: event.target.channel.value, messages: [] })
+        await this.setState({ ...this.state, username: event.target.username.value, messages: [] })
         this.start()
     }
 
@@ -124,7 +123,7 @@ export class Main extends React.Component {
         var objData = Object.fromEntries(data);
         const pushInput = new Push.PushInput();
         pushInput.setTopic('chat');
-        pushInput.setChannel(this.state.channel);
+        pushInput.setChannel('chat-demo');
         var pbf = new Pbf();
         Message.write({ ...objData, username: this.state.username }, pbf);
         var buffer = pbf.finish();
@@ -149,8 +148,6 @@ export class Main extends React.Component {
                         <h1>Please pick a username </h1>
                         <label>Username</label>
                         <input id="username" type="text"></input>
-                        <label>Channel</label>
-                        <input id="channel" type="text"></input>
                         <button>Login</button>
                     </form> :
                     <div><h2>
