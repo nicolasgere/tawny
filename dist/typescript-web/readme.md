@@ -1,5 +1,5 @@
 
-# 🦉 Tawny  🦉  [![npm version](https://badge.fury.io/js/tawny-web.svg)](https://badge.fury.io/js/tawny-web)   [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/gitterHQ/gitter)
+# 🦉 Tawny  🦉  [![npm version](https://badge.fury.io/js/tawny-web.svg)](https://badge.fury.io/js/tawny-web)   [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/tawny-server/community)
 
   
 This repository contains Typescrit/JavaScript client for Nodejs for [Tawny](https://github.com/nicolasgere/tawny). Tawny  is an extremly low latency, public facing pubsub. It use protobuf for end to end communication (from browser to server and server to browser) using [grpc-web](https://github.com/grpc/grpc-web) protocol.   
