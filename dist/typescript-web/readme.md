@@ -1,6 +1,6 @@
 
-# 🦉 Tawny  🦉  [![npm version](https://badge.fury.io/js/tawny-web.svg)](https://badge.fury.io/js/tawny-web)
-  
+# 🦉 Tawny  🦉  [![npm version](https://badge.fury.io/js/tawny-web.svg)](https://badge.fury.io/js/tawny-web)   [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/gitterHQ/gitter)
+
   
 This repository contains Typescrit/JavaScript client for Nodejs for [Tawny](https://github.com/nicolasgere/tawny). Tawny  is an extremly low latency, public facing pubsub. It use protobuf for end to end communication (from browser to server and server to browser) using [grpc-web](https://github.com/grpc/grpc-web) protocol.   
 It allows you to build an awesome realtime features without the pain.  
@@ -8,7 +8,7 @@ It allows you to build an awesome realtime features without the pain.
 - [Installation](#Installation)  
 - [Example](#example)  
 - [API](#api)  
-  
+- [Community](#community)  
   
 ## Installation  
 You can found instructions for running a Tawny server in the [getting started](https://github.com/nicolasgere/Tawny/blob/master/docs/getting-started.md) page.  
@@ -82,3 +82,7 @@ For more information have a look to [grpc-web client](https://github.com/improba
 ## Api
 
 As the library is generated based on protobuf files. You can found the documentation of the api [here](https://github.com/nicolasgere/tawny/blob/master/docs/proto.md) ***Only push and presence services are available in the web client***
+
+## Community
+
+Join us on [gitter](https://gitter.im/tawny-server/community) 

@@ -1,5 +1,5 @@
 
-# 🦉 Tawny  🦉
+# 🦉 Tawny  🦉 [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/gitterHQ/gitter)
   
 🚀 Tawny is an extremely low latency, public facing pubsub. It uses protobuf for end-to-end communication (from browser to server and server to browser) using [grpc-web](https://github.com/grpc/grpc-web) protocol. 
 It allows you to build an awesome user experience with realtime features.
@@ -48,9 +48,9 @@ This is our feature roadmap. If you want to ask for a new feature, please open a
 ## Performance
 With 1 core / 1gb of ram on Digital ocean,  Tawny is able to process up to 50k messages seconds within < 5 ms latency.
   
-## Author  
-  
-👤 **nicolas gere-lamaysouette**  
+## Community
+
+Join us on [gitter](https://gitter.im/tawny-server/community) 
   
   
 ## Show your support  
