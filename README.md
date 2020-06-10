@@ -1,5 +1,9 @@
 
-# 🦉 Tawny  🦉 [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/tawny-server/community)
+# 🦉 Tawny  🦉 
+[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/tawny-server/community) 
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=nicolasgere_tawny&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=nicolasgere_tawny)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=nicolasgere_tawny&metric=alert_status)](https://sonarcloud.io/dashboard?id=nicolasgere_tawny)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=nicolasgere_tawny&metric=security_rating)](https://sonarcloud.io/dashboard?id=nicolasgere_tawny)
   
 🚀 Tawny is an extremely low latency, public facing pubsub. It uses protobuf for end-to-end communication (from browser to server and server to browser) using [grpc-web](https://github.com/grpc/grpc-web) protocol. 
 It allows you to build an awesome user experience with realtime features.
