@@ -13,7 +13,7 @@ Tawny was designed with performance/scaling/reliability in mind. It provides mul
 - **Publish/Subscribe**, publish a message from anywhere and get your users notified instantly. 
 - **Presence**,  know who is connected or not in a channel, perfect for building presense feature like google docs. 
 - **State**, you can share a state with your presence, awesome for "is typing" feature.  
-- **Binary data**, thanks to profobuf/grpc, your payload doesn't need to be json. It can be every binary fuke
+- **Binary data**, thanks to profobuf/grpc, your payload doesn't need to be json. It can be every binary file
 - **Private channel**, you can control who has access to a channel.  
 - **Complete admin library/cli**, manage your Tawny server using a powerful admin api.  
 - **Monitoring**, monitor your server easily with our promotheus (and more to come)  metrics exporter.  
